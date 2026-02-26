@@ -357,8 +357,8 @@
                     <h2 class="title is-3">Why ~$10?</h2>
                     <div class="content has-text-justified">
                         <p>
-                            Most audio-language models train everything from scratch &mdash; speech understanding,
-                            language generation, and the connection between them &mdash; requiring thousands of GPU
+                            Most audio-language models train everything from scratch, speech understanding,
+                            language generation, and the connection between them, requiring thousands of GPU
                             hours and millions of dollars. Vocal LLM takes a fundamentally different approach: <b>we
                                 don't train the foundations, we bridge them.</b>
                         </p>
@@ -378,7 +378,7 @@
                                 </p>
                                 <p style="font-size:0.85rem; color:#666; line-height:1.6; margin:0;">
                                     Trained on <b>680,000 hours</b> of web audio. Already understands multilingual
-                                    speech. We inherit all of this for free &mdash; zero gradients flow through its 300M
+                                    speech. We inherit all of this for free, zero gradients flow through its 300M
                                     parameters.
                                 </p>
                             </div>
@@ -391,7 +391,7 @@
                                 <p style="font-size:0.85rem; color:#666; line-height:1.6; margin:0;">
                                     A 24-billion parameter Mistral-based LLM pre-trained on Indic language corpora.
                                     Already knows Hindi vocabulary, grammar, and cultural context. We only adapt it with
-                                    lightweight LoRA &mdash; <b>&lt;1% of its parameters</b>.
+                                    lightweight LoRA, <b>&lt;1% of its parameters</b>.
                                 </p>
                             </div>
                         </div>
@@ -402,7 +402,7 @@
                             The only thing we actually train from scratch is the <b>projector</b> &mdash; a small
                             two-layer MLP (~60M params) that learns to map Whisper's speech embeddings into Sarvam-M's
                             input space. Because Sarvam-M already understands Hindi, the projector only needs to learn
-                            the audio-to-text mapping, not the language itself. This is why <b>3,000 training samples
+                            the audio-to-text mapping, not the language itself. This is why <b>10k pre-training samples and 3k fine-tuning
                                 are enough</b> to produce functional results.
                         </p>
                         <p>
@@ -607,66 +607,13 @@
                     <div class="content has-text-justified">
                         <p>
                             Because we only train the bridge between two frozen foundation models &mdash; not the
-                            foundations themselves &mdash; Vocal LLM achieves functional audio-language capabilities at
+                            foundations themselves, Vocal LLM achieves functional audio-language capabilities at
                             <b>2&ndash;4 orders of magnitude lower cost</b> than comparable systems. Other approaches
                             train speech encoders, language models, or both from scratch; we inherit all that knowledge
                             for free.
                         </p>
                     </div>
-                    <table class="table is-fullwidth is-hoverable cost-table">
-                        <thead>
-                            <tr>
-                                <th>Model</th>
-                                <th>GPUs</th>
-                                <th>Hours</th>
-                                <th>Est. Cost</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>AudioPaLM</td>
-                                <td>1000s</td>
-                                <td>1000s</td>
-                                <td>$1M+</td>
-                            </tr>
-                            <tr>
-                                <td>SeamlessM4T</td>
-                                <td>1000s</td>
-                                <td>1000s</td>
-                                <td>$500K+</td>
-                            </tr>
-                            <tr>
-                                <td>SpeechGPT</td>
-                                <td>96&times;A100</td>
-                                <td>72+</td>
-                                <td>$50K+</td>
-                            </tr>
-                            <tr>
-                                <td>SALMONN</td>
-                                <td>8&times;A100</td>
-                                <td>100+</td>
-                                <td>$5K+</td>
-                            </tr>
-                            <tr>
-                                <td>Qwen-Audio</td>
-                                <td>32&times;A100</td>
-                                <td>100+</td>
-                                <td>$20K+</td>
-                            </tr>
-                            <tr>
-                                <td>Shuka v1</td>
-                                <td>&ndash;</td>
-                                <td>&ndash;</td>
-                                <td>&lt;$1K</td>
-                            </tr>
-                            <tr class="ours">
-                                <td>Vocal LLM (Ours)</td>
-                                <td>1&times;A100</td>
-                                <td>6</td>
-                                <td>~$10</td>
-                            </tr>
-                        </tbody>
-                    </table>
+             
                 </div>
             </div>
         </div>
