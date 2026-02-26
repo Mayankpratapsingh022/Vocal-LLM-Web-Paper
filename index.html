@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description"
+        content="Vocal LLM: Cost-Efficient Joint Audio-Language Modeling via Lightweight Projector Training over Frozen Foundations">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vocal LLM</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans', sans-serif;
+        }
+
+        .publication-title {
+            font-family: 'Google Sans', sans-serif;
+        }
+
+        .publication-authors {
+            font-family: 'Google Sans', sans-serif;
+        }
+
+        .hero-body {
+            padding-bottom: 2rem;
+        }
+
+        section.section {
+            padding: 2rem 1.5rem;
+        }
+
+        .inference-card {
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .inference-header {
+            background: #f5f5f5;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .inference-header .tag-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #363636;
+        }
+
+        .inference-body {
+            padding: 0;
+        }
+
+        .inference-row {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .inference-row:last-child {
+            border-bottom: none;
+        }
+
+        .inference-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #999;
+            margin-bottom: 0.25rem;
+        }
+
+        .inference-text {
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: #363636;
+        }
+
+        .inference-row.output {
+            background: #fafafa;
+        }
+
+        .inference-row.output .inference-text {
+            font-weight: 500;
+        }
+
+        audio {
+            height: 32px;
+        }
+
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            flex-wrap: nowrap;
+            padding: 1.5rem 0;
+        }
+
+        .arch-block {
+            font-size: 0.7rem;
+            padding: 0.5rem 0.7rem;
+            border: 2px solid #dbdbdb;
+            text-align: center;
+            background: #fff;
+            font-weight: 600;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .arch-block.frozen {
+            background: #363636;
+            color: #fff;
+            border-color: #363636;
+        }
+
+        .arch-block.trainable {
+            background: #3273dc;
+            color: #fff;
+            border-color: #3273dc;
+        }
+
+        .arch-block.adapted {
+            background: #363636;
+            color: #fff;
+            border-color: #3273dc;
+        }
+
+        .arch-block small {
+            display: block;
+            font-size: 0.55rem;
+            font-weight: 400;
+            opacity: 0.75;
+            margin-top: 1px;
+        }
+
+        .arch-block .status-tag {
+            position: absolute;
+            top: -8px;
+            right: -4px;
+            font-size: 0.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+
+        .status-tag.frozen-tag {
+            background: #eee;
+            color: #888;
+        }
+
+        .status-tag.train-tag {
+            background: #48c774;
+            color: #fff;
+        }
+
+        .arch-arrow {
+            font-size: 1rem;
+            color: #bbb;
+            padding: 0 0.25rem;
+            font-weight: 300;
+        }
+
+        .cost-table th,
+        .cost-table td {
+            font-size: 0.85rem;
+        }
+
+        .cost-table tr.ours {
+            background: #effaf5;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .arch-block {
+                font-size: 0.6rem;
+                padding: 0.4rem 0.5rem;
+            }
+
+            .arch-arrow {
+                font-size: 0.8rem;
+                padding: 0 0.15rem;
+            }
+
+            .inference-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-widescreen">
+                <div class="columns is-centered">
+                    <div class="column has-text-centered">
+                        <h1 class="subtitle is-3 publication-title">
+                            <b>Vocal LLM:</b> Cost-Efficient Joint Audio-Language Modeling<br>via Lightweight Projector
+                            Training over Frozen Foundations
+                        </h1>
+
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">Anonymous Author(s)</span>
+                        </div>
+
+                        <br>
+
+                        <div class="column has-text-centered">
+                            <div class="publication-links">
+                                <span class="link-block">
+                                    <a href="#" class="button is-normal is-rounded is-dark">
+                                        <span class="icon"><i class="ai ai-arxiv"></i></span>
+                                        <span>Paper</span>
+                                    </a>
+                                </span>
+                                <span class="link-block">
+                                    <a href="https://github.com/VizuaraAI/audio-llm/" target="_blank"
+                                        class="button is-normal is-rounded is-dark">
+                                        <span class="icon"><i class="fab fa-github"></i></span>
+                                        <span>Code</span>
+                                    </a>
+                                </span>
+                                <span class="link-block">
+                                    <a href="https://huggingface.co/teamvizuara/Vocal-LLM" target="_blank"
+                                        class="button is-normal is-rounded is-dark">
+                                        <span class="icon"><img src="./assets/images/hf-logo.svg" alt="HF"
+                                                style="width:18px; height:18px; vertical-align:middle;"></span>
+                                        <span>Model</span>
+                                    </a>
+                                </span>
+                                <span class="link-block">
+                                    <a href="https://huggingface.co/" target="_blank"
+                                        class="button is-normal is-rounded is-dark">
+                                        <span class="icon"><img src="./assets/images/hf-logo.svg" alt="HF"
+                                                style="width:18px; height:18px; vertical-align:middle;"></span>
+                                        <span>Dataset</span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABSTRACT -->
+    <section class="section hero is-light">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <div class="content has-text-justified">
+                        <p>
+                            We present <b>Vocal LLM</b>, a cost-efficient joint audio-language model that bridges a
+                            frozen Whisper speech encoder with the Sarvam-M indic large language model through a
+                            lightweight trainable projector. We pre-train on 10,000 audio continuation pairs and
+                            fine-tune on a synthetic Hindi audio question-answering dataset of 3,000 samples, training
+                            only a two-layer MLP projector (~60M parameters) along with LoRA-adapted LLM weights. The
+                            entire training pipeline completes in approximately <b>6 hours on a single NVIDIA A100
+                                GPU</b>, costing roughly <b>$10</b> in compute. Our work validates that the
+                            projector-based paradigm, pioneered in vision-language models such as LLaVA, transfers
+                            effectively to the audio domain.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Architecture</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            Vocal LLM follows a three-component architecture consisting of a speech encoder, a
+                            multimodal projector, and a large language model. The overall design applies the LLaVA-1.5
+                            projector paradigm to the audio domain.
+                        </p>
+                    </div>
+
+                    <div class="arch-flow">
+                        <div class="arch-block">Audio Input</div>
+                        <div class="arch-arrow">&rarr;</div>
+                        <div class="arch-block frozen">
+                            <span class="status-tag frozen-tag">frozen</span>
+                            Whisper Encoder<small>300M params</small>
+                        </div>
+                        <div class="arch-arrow">&rarr;</div>
+                        <div class="arch-block trainable">
+                            <span class="status-tag train-tag">trained</span>
+                            MLP Projector<small>60M params</small>
+                        </div>
+                        <div class="arch-arrow">&rarr;</div>
+                        <div class="arch-block adapted">
+                            <span class="status-tag train-tag">LoRA</span>
+                            Sarvam-M 24B<small>103M adapted</small>
+                        </div>
+                        <div class="arch-arrow">&rarr;</div>
+                        <div class="arch-block">Text Output</div>
+                    </div>
+
+                    <img src="./assets/images/Joint_embedding_model_Sarvam_with_Whisper.svg"
+                        alt="Vocal LLM Architecture" width="100%">
+                    <p class="is-size-7 has-text-centered" style="margin-top:0.5rem; color:#888;">
+                        <b>Figure 1.</b> Vocal LLM Architecture. Audio is processed by the frozen Whisper encoder,
+                        projected via a two-layer MLP with 8&times; temporal downsampling, concatenated with text
+                        tokens, and processed by the LoRA-adapted Sarvam-M LLM.
+                    </p>
+
+                    <br>
+
+                    <div class="content has-text-justified">
+                        <ul>
+                            <li><b>Whisper Encoder</b> &mdash; <code>whisper-medium</code> (~300M params), completely
+                                frozen. Produces 1024-dim embeddings at 50 frames/sec.</li>
+                            <li><b>MLP Projector</b> &mdash; Two-layer MLP with GELU and LayerNorm (~60M params). Stacks
+                                8 consecutive frames, reducing 1500 frames to ~188 pseudo-tokens.</li>
+                            <li><b>Sarvam-M LLM (24B)</b> &mdash; Mistral-based LLM optimized for Indic languages,
+                                adapted with LoRA (rank 16, &alpha;=32). Total trainable: &lt;3% of full model.</li>
+                        </ul>
+                    </div>
+
+                    <div class="columns is-mobile is-multiline" style="margin-top:1.5rem;">
+                        <div class="column is-half">
+                            <img src="./assets/images/Whisper_Encoder.svg" alt="Whisper Encoder" width="100%">
+                            <p class="is-size-7 has-text-centered" style="color:#888;"><b>Figure 2.</b> Whisper encoder
+                            </p>
+                        </div>
+                        <div class="column is-half">
+                            <img src="./assets/images/Saravam_LLM_based_on_Mistral.svg" alt="Sarvam-M LLM" width="100%">
+                            <p class="is-size-7 has-text-centered" style="color:#888;"><b>Figure 3.</b> Sarvam-M
+                                (Mistral-based)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY SO CHEAP -->
+    <section class="section hero is-light">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Why ~$10?</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            Most audio-language models train everything from scratch &mdash; speech understanding,
+                            language generation, and the connection between them &mdash; requiring thousands of GPU
+                            hours and millions of dollars. Vocal LLM takes a fundamentally different approach: <b>we
+                                don't train the foundations, we bridge them.</b>
+                        </p>
+                        <p>
+                            We stand on two pre-trained foundation models that already encode enormous amounts of
+                            knowledge:
+                        </p>
+                    </div>
+
+                    <div class="columns is-variable is-4"
+                        style="margin-top:1rem; margin-bottom:1.5rem; text-align:left;">
+                        <div class="column">
+                            <div
+                                style="border:1px solid #dbdbdb; border-radius:6px; padding:1.25rem; background:#fff; height:100%;">
+                                <p style="font-weight:700; font-size:0.95rem; margin-bottom:0.5rem;">OpenAI Whisper
+                                    <span style="color:#999; font-weight:400;">(frozen)</span>
+                                </p>
+                                <p style="font-size:0.85rem; color:#666; line-height:1.6; margin:0;">
+                                    Trained on <b>680,000 hours</b> of web audio. Already understands multilingual
+                                    speech. We inherit all of this for free &mdash; zero gradients flow through its 300M
+                                    parameters.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div
+                                style="border:1px solid #dbdbdb; border-radius:6px; padding:1.25rem; background:#fff; height:100%;">
+                                <p style="font-weight:700; font-size:0.95rem; margin-bottom:0.5rem;">Sarvam-M 24B <span
+                                        style="color:#999; font-weight:400;">(LoRA-adapted)</span></p>
+                                <p style="font-size:0.85rem; color:#666; line-height:1.6; margin:0;">
+                                    A 24-billion parameter Mistral-based LLM pre-trained on Indic language corpora.
+                                    Already knows Hindi vocabulary, grammar, and cultural context. We only adapt it with
+                                    lightweight LoRA &mdash; <b>&lt;1% of its parameters</b>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content has-text-justified">
+                        <p>
+                            The only thing we actually train from scratch is the <b>projector</b> &mdash; a small
+                            two-layer MLP (~60M params) that learns to map Whisper's speech embeddings into Sarvam-M's
+                            input space. Because Sarvam-M already understands Hindi, the projector only needs to learn
+                            the audio-to-text mapping, not the language itself. This is why <b>3,000 training samples
+                                are enough</b> to produce functional results.
+                        </p>
+                        <p>
+                            Three design choices make this possible:
+                        </p>
+                        <ol>
+                            <li><b>Frozen speech encoder</b> &mdash; Whisper's 300M parameters stay fixed, preserving
+                                680K hours of learned speech representations and eliminating the largest training cost.
+                            </li>
+                            <li><b>LoRA instead of full fine-tuning</b> &mdash; Only ~103M adapter parameters are
+                                trained on the LLM side (rank 16, applied to all attention projections), keeping total
+                                trainable parameters under 3% of the full model.</li>
+                            <li><b>Synthetic data from existing ASR corpora</b> &mdash; Instead of expensive multimodal
+                                API calls or human annotation, we generate instruction-answer pairs from text
+                                transcripts of Mozilla Common Voice. This is <b>10&ndash;50&times; cheaper</b> than
+                                processing raw audio through frontier models.</li>
+                        </ol>
+                        <p>
+                            The result: the entire two-stage training pipeline (pre-training + instruction fine-tuning)
+                            runs in <b>~6 hours on a single A100 GPU</b>. At current cloud rates, that's approximately
+                            <b>$10</b>.
+                        </p>
+                    </div>
+
+                    <table class="table is-fullwidth is-hoverable cost-table" style="margin-top:1rem;">
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>Parameters</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Whisper Encoder</td>
+                                <td>~300M</td>
+                                <td><span class="tag is-light">Frozen</span></td>
+                            </tr>
+                            <tr>
+                                <td>Sarvam-M LLM</td>
+                                <td>~24B</td>
+                                <td><span class="tag is-light">Frozen (base weights)</span></td>
+                            </tr>
+                            <tr>
+                                <td>MLP Projector</td>
+                                <td>~60M</td>
+                                <td><span class="tag is-success is-light">Trained</span></td>
+                            </tr>
+                            <tr>
+                                <td>LoRA Adapters</td>
+                                <td>~103M</td>
+                                <td><span class="tag is-success is-light">Trained</span></td>
+                            </tr>
+                            <tr class="ours">
+                                <td><b>Total trainable</b></td>
+                                <td><b>~163M</b></td>
+                                <td><b>&lt;3% of full model</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INFERENCE -->
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Inference Examples</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            We evaluate Vocal LLM on diverse Hindi audio inputs. The model demonstrates question
+                            answering in Hindi and cross-lingual understanding (Hindi audio &rarr; English text),
+                            despite training on only 3,000 samples.
+                        </p>
+                    </div>
+
+                    <img src="./assets/images/Inferecne_output.svg" alt="Inference Examples Overview" width="100%">
+                    <p class="is-size-7 has-text-centered" style="margin-top:0.5rem; margin-bottom:2rem; color:#888;">
+                        <b>Figure 4.</b> Inference examples showing transcription, question answering, and cross-lingual
+                        understanding.
+                    </p>
+
+                    <!-- Sample 3 -->
+                    <div class="inference-card">
+                        <div class="inference-header">
+                            <span class="tag-label">Sample 1 &mdash; Hindi QA</span>
+                            <audio controls preload="none">
+                                <source src="./assets/audio/audio_3.wav" type="audio/wav">
+                            </audio>
+                        </div>
+                        <div class="inference-body">
+                            <div class="inference-row">
+                                <div class="inference-label">Instruction</div>
+                                <div class="inference-text">[INST] Based on the provided audio, answer the following
+                                    question: Kya aap bata sakte ho ki wahan par kitne khel shamil honge? [/INST]</div>
+                            </div>
+                            <div class="inference-row">
+                                <div class="inference-label">Ground Truth</div>
+                                <div class="inference-text">टोक्यो में होने वाले अगले ओलंपिक में पांच खेल शामिल होंगे।
+                                </div>
+                            </div>
+                            <div class="inference-row output">
+                                <div class="inference-label">Model Output</div>
+                                <div class="inference-text">टोक्यो में होने वाले अगले ओलंपिक में ५ (पांच) खेल शामिल
+                                    होंगे।</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sample 4 -->
+                    <div class="inference-card">
+                        <div class="inference-header">
+                            <span class="tag-label">Sample 2 &mdash; Hindi QA</span>
+                            <audio controls preload="none">
+                                <source src="./assets/audio/audio_4.wav" type="audio/wav">
+                            </audio>
+                        </div>
+                        <div class="inference-body">
+                            <div class="inference-row">
+                                <div class="inference-label">Instruction</div>
+                                <div class="inference-text">[INST] Based on the provided audio, answer the following
+                                    question: Mujhe kis station par jana chahiye? [/INST]</div>
+                            </div>
+                            <div class="inference-row">
+                                <div class="inference-label">Ground Truth</div>
+                                <div class="inference-text">जिस स्टेशन पर आपको जाना चाहिए उसे गमाला स्टेन कहा जाता है।
+                                </div>
+                            </div>
+                            <div class="inference-row output">
+                                <div class="inference-label">Model Output</div>
+                                <div class="inference-text">आपको गमाला स्टेन पर जाना चाहिए।</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sample 5 -->
+                    <div class="inference-card">
+                        <div class="inference-header">
+                            <span class="tag-label">Sample 3 &mdash; Hindi QA</span>
+                            <audio controls preload="none">
+                                <source src="./assets/audio/audio_5.wav" type="audio/wav">
+                            </audio>
+                        </div>
+                        <div class="inference-body">
+                            <div class="inference-row">
+                                <div class="inference-label">Instruction</div>
+                                <div class="inference-text">[INST] Based on the provided audio, answer the following
+                                    question: Unhone kya dikhakar keemti saman manga? [/INST]</div>
+                            </div>
+                            <div class="inference-row">
+                                <div class="inference-label">Ground Truth</div>
+                                <div class="inference-text">उन्होंने पिस्तौल दिखाकर कीमती सामान देने को कहा था।</div>
+                            </div>
+                            <div class="inference-row output">
+                                <div class="inference-label">Model Output</div>
+                                <div class="inference-text">उन्होंने पिस्तौल दिखाकर कीमती सामान मांगा।</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sample 6 -->
+                    <div class="inference-card">
+                        <div class="inference-header">
+                            <span class="tag-label">Sample 4 &mdash; Cross-lingual (Hindi &rarr; English)</span>
+                            <audio controls preload="none">
+                                <source src="./assets/audio/audio_6.wav" type="audio/wav">
+                            </audio>
+                        </div>
+                        <div class="inference-body">
+                            <div class="inference-row">
+                                <div class="inference-label">Instruction</div>
+                                <div class="inference-text">[INST] Based on the provided audio, answer the following
+                                    question: Translate the spoken sentence into English. [/INST]</div>
+                            </div>
+                            <div class="inference-row">
+                                <div class="inference-label">Ground Truth</div>
+                                <div class="inference-text">उन्होंने कहा कि एयर इंडिया की फ्लाइट्स पर कोई विशेष प्रभाव
+                                    नहीं पड़ा है।</div>
+                            </div>
+                            <div class="inference-row output">
+                                <div class="inference-label">Model Output</div>
+                                <div class="inference-text">They said that there has been no significant impact on Air
+                                    India flights.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COST -->
+    <section class="section hero is-light">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Cost Comparison</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            Because we only train the bridge between two frozen foundation models &mdash; not the
+                            foundations themselves &mdash; Vocal LLM achieves functional audio-language capabilities at
+                            <b>2&ndash;4 orders of magnitude lower cost</b> than comparable systems. Other approaches
+                            train speech encoders, language models, or both from scratch; we inherit all that knowledge
+                            for free.
+                        </p>
+                    </div>
+                    <table class="table is-fullwidth is-hoverable cost-table">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>GPUs</th>
+                                <th>Hours</th>
+                                <th>Est. Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>AudioPaLM</td>
+                                <td>1000s</td>
+                                <td>1000s</td>
+                                <td>$1M+</td>
+                            </tr>
+                            <tr>
+                                <td>SeamlessM4T</td>
+                                <td>1000s</td>
+                                <td>1000s</td>
+                                <td>$500K+</td>
+                            </tr>
+                            <tr>
+                                <td>SpeechGPT</td>
+                                <td>96&times;A100</td>
+                                <td>72+</td>
+                                <td>$50K+</td>
+                            </tr>
+                            <tr>
+                                <td>SALMONN</td>
+                                <td>8&times;A100</td>
+                                <td>100+</td>
+                                <td>$5K+</td>
+                            </tr>
+                            <tr>
+                                <td>Qwen-Audio</td>
+                                <td>32&times;A100</td>
+                                <td>100+</td>
+                                <td>$20K+</td>
+                            </tr>
+                            <tr>
+                                <td>Shuka v1</td>
+                                <td>&ndash;</td>
+                                <td>&ndash;</td>
+                                <td>&lt;$1K</td>
+                            </tr>
+                            <tr class="ours">
+                                <td>Vocal LLM (Ours)</td>
+                                <td>1&times;A100</td>
+                                <td>6</td>
+                                <td>~$10</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BIBTEX -->
+    <section class="section" id="BibTeX">
+        <div class="container is-max-desktop content">
+            <h2 class="title">BibTeX</h2>
+            <pre><code>@article{vocalllm2026,
+  title={Vocal LLM: Cost-Efficient Joint Audio-Language Modeling
+         via Lightweight Projector Training over Frozen Foundations},
+  author={Anonymous},
+  year={2026}
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                <a class="icon-link" href="#"><i class="fas fa-file-pdf"></i></a>
+                &nbsp;
+                <a class="icon-link" href="https://github.com/" target="_blank"><i class="fab fa-github"></i></a>
+            </div>
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="content has-text-centered" style="font-size:0.85rem; color:#999;">
+                        <p>Template adapted from <a href="https://github.com/nerfies/nerfies.github.io"
+                                target="_blank">Nerfies</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
