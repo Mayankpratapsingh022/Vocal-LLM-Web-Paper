@@ -566,6 +566,9 @@
                         </div>
                     </div>
 
+
+
+                    
                     <!-- Sample 6 -->
                     <div class="inference-card">
                         <div class="inference-header">
@@ -589,6 +592,74 @@
                                 <div class="inference-label">Model Output</div>
                                 <div class="inference-text">They said that there has been no significant impact on Air
                                     India flights.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ]
+<section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Limitations & Hallucinations</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            While the lightweight fusion of the speech encoder and language model is highly efficient, it occasionally struggles to maintain strict audio grounding during inference. In ambiguous or out-of-distribution acoustic conditions, the model is prone to hallucination—generating structurally plausible Hindi text that completely disconnects from the actual spoken input.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+   <!--sapmle 7-->
+                    <div class="inference-card">
+                        <div class="inference-header">
+                            <span class="tag-label">Sample 5 &mdash; Hindi QA</span>
+                            <audio controls preload="none">
+                                <source src="./assets/audio/audio_7.mp3" type="audio/mp3">
+                            </audio>
+                        </div>
+                        <div class="inference-body">
+                            <div class="inference-row">
+                                <div class="inference-label">Instruction</div>
+                                <div class="inference-text">[INST] Based on the provided audio, answer the following
+                                    question: What is the exact transcript of the spoken audio? [/INST]</div>
+                            </div>
+                            <div class="inference-row">
+                                <div class="inference-label">Ground Truth</div>
+                                <div class="inference-text">इन लक्षणों को अनदेखा न करें, यह चिकनगुनिया भी हो सकता है।
+                                </div>
+                            </div>
+                            <div class="inference-row output">
+                                <div class="inference-label">Model Output</div>
+                                <div class="inference-text">i am not able to think which audio file you are talking about like that </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--sample 6-->
+                    <div class="inference-card">
+                        <div class="inference-header">
+                            <span class="tag-label">Sample 6 &mdash; Hindi QA</span>
+                            <audio controls preload="none">
+                                <source src="./assets/audio/audio_8.wav" type="audio/wav">
+                            </audio>
+                        </div>
+                        <div class="inference-body">
+                            <div class="inference-row">
+                                <div class="inference-label">Instruction</div>
+                                <div class="inference-text">[INST] Based on the provided audio, tell me the tone of the speaker [/INST]</div>
+                            </div>
+                            <div class="inference-row">
+                                <div class="inference-label">Ground Truth</div>
+                                <div class="inference-text">उनका संपूर्ण संवेदन भाषा की सामान्य संरचनाओं की सीमाओं से परे का संवेदन है। उन संरचनाओं से परे का जो मानवीय अभिव्यक्ति का संचालन करती हैं।
+                                </div>
+                            </div>
+                            <div class="inference-row output">
+                                <div class="inference-label">Model Output</div>
+                                <div class="inference-text">##@ </div>
                             </div>
                         </div>
                     </div>
